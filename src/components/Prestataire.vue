@@ -3,6 +3,7 @@
         <div class="titre">
             <h3><span>Nos</span> Prestataires</h3> 
         </div>  
+        <router-link to="/profil">Profil</router-link>
         <div class="container px-4 py-5" id="featured-3">
             <div class="card-grid">
                 <div class="feature">
