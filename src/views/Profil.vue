@@ -1,219 +1,218 @@
 <template>
-    <div class="container mt-5 profile-page">
-      <!-- Header de profil avec photo et informations de base -->
-      <div class="row">
-        <div class="col-md-4 text-center">
-          <img :src="photoUrl" alt="Photo de profil" class="profile-img rounded-circle" />
-        </div>
-        <div class="col-md-8">
-          <h2 class="text-left">{{ name }}</h2>
-          <p class="text-muted text-left">{{ domaine }}</p>
-          <p class="description text-left">{{ description }}</p>
-          <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">Modifier le profil</button>
-          <button class="btn btn-secondary mt-2" data-bs-toggle="modal" data-bs-target="#addProjectModal">Ajouter un nouveau projet</button>
-        </div>
-      </div>
-  
-      <!-- Contact et liens sociaux -->
-      <div class="row mt-4">
-        <div class="col-md-6 text-left">
-          <p><i class="fas fa-phone-alt"></i> {{ telephone }}</p>
-          <p><i class="fas fa-envelope"></i> {{ email }}</p>
-        </div>
-        <div class="col-md-6 text-left">
+  <NavBar />
+  <div v-if="user" class="container mt-5 profile-page">
+    <img src="../assets/pexels-goumbik-628241.jpg" alt="" class="cover-image" />
+    
+    <div class="profile-header text-center mb-4">
+      <img :src="user.profil || 'https://via.placeholder.com/150'" alt="Photo de profil" class="profile-img rounded-circle mb-3" />
+      
+      <div class="user-info">
+        <h2 class="name">{{ user.name }}</h2>
+        <p class="text-muted">{{ user.domain }}</p>
+        <p class="availability">Disponibilité: {{ user.availability }}</p>
+        <div class="contact-info text-center mb-4">
+          <p><i class="fas fa-phone-alt"></i> {{ user.telephone }} <br> <i class="fas fa-envelope"></i> {{ user.email }}</p>
           <div class="social-links">
-            <a v-for="(url, icon) in socialLinks" :key="icon" :href="url" target="_blank" class="social-icon">
+            <a v-for="(url, icon) in socialLinks" :key="icon" :href="url" target="_blank" class="social-icon mx-2">
               <i :class="icon"></i>
             </a>
           </div>
         </div>
       </div>
-  
-      <!-- Section Services -->
-      <div class="services-section mt-5">
-        <h3>Services proposés</h3>
-        <ul class="list-group">
-          <li v-for="(service, index) in services" :key="index" class="list-group-item">
-            {{ service }}
-          </li>
-        </ul>
+
+      <div class="edit-buttons text-center">
+        <button class="btn btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#editProfileModal" @click="EditProfile()">Modifier le profil</button>
+        <button class="btn btn-secondary mx-2" data-bs-toggle="modal" data-bs-target="#addProjectModal">Ajouter un projet</button>
       </div>
-  
-      <!-- Modal pour modification du profil -->
-      <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="editProfileModalLabel">Modifier le profil</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <form @submit.prevent="saveProfile">
-                <div class="grid-form">
-                  <div class="mb-3">
-                    <label for="name" class="form-label">Nom</label>
-                    <input type="text" id="name" v-model="name" class="form-control" required />
-                  </div>
-                  <div class="mb-3">
-                    <label for="photoUrl" class="form-label">URL de la photo de profil</label>
-                    <input type="text" id="photoUrl" v-model="photoUrl" class="form-control" />
-                  </div>
-                  <div class="mb-3">
-                    <label for="domaine" class="form-label">Domaine</label>
-                    <input type="text" id="domaine" v-model="domaine" class="form-control" required />
-                  </div>
-                  <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea id="description" v-model="description" class="form-control" rows="3" required></textarea>
-                  </div>
-                  <div class="mb-3">
-                    <label for="telephone" class="form-label">Téléphone</label>
-                    <input type="text" id="telephone" v-model="telephone" class="form-control" required />
-                  </div>
-                  <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" id="email" v-model="email" class="form-control" required />
-                  </div>
-                  <div class="mb-3">
-                    <label for="services" class="form-label">Services proposés</label>
-                    <input type="text" v-model="newService" class="form-control mb-2" placeholder="Ajouter un service" />
-                    <button type="button" class="btn btn-secondary w-100 mb-2" @click="addService">Ajouter un service</button>
-                  </div>
-                </div>
-                <button type="submit" class="btn btn-success w-100">Enregistrer</button>
-              </form>
-            </div>
-          </div>
-        </div>
+    </div>
+
+    <div class="section description-section text-center mb-4">
+      <h3 class="section-title">Description</h3>
+      <p class="description-text">{{ user.description }}</p>
+    </div>
+
+    <div class="section services-section text-center mb-4">
+      <h3 class="section-title">Services Proposés</h3>
+      <div class="d-flex justify-content-center flex-wrap">
+        <span v-for="(service, index) in user.services" :key="index" class="badge service-badge">{{ service }}</span>
       </div>
-  
-      <!-- Modal pour ajouter un nouveau projet -->
-      <div class="modal fade" id="addProjectModal" tabindex="-1" aria-labelledby="addProjectModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="addProjectModalLabel">Ajouter un nouveau projet</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <form @submit.prevent="addProject">
-                <div class="mb-3">
-                  <label for="projectTitle" class="form-label">Titre du projet</label>
-                  <input type="text" id="projectTitle" v-model="newProject.title" class="form-control" required />
-                </div>
-                <div class="mb-3">
-                  <label for="projectDescription" class="form-label">Description du projet</label>
-                  <textarea id="projectDescription" v-model="newProject.description" class="form-control" rows="3" required></textarea>
-                </div>
-                <div class="mb-3">
-                  <label for="companyName" class="form-label">Nom de l'entreprise</label>
-                  <input type="text" id="companyName" v-model="newProject.companyName" class="form-control" required />
-                </div>
-                <div class="mb-3">
-                  <label for="projectDate" class="form-label">Date</label>
-                  <input type="date" id="projectDate" v-model="newProject.date" class="form-control" required />
-                </div>
-                <button type="submit" class="btn btn-success w-100">Ajouter le projet</button>
-              </form>
+    </div>
+
+    <div class="section projects-section mt-5">
+      <h3 class="section-title text-center mb-4">Projets Réalisés</h3>
+      <div class="row">
+        <div class="col-md-4" v-for="(project, index) in user.projects" :key="index">
+          <div class="card project-card shadow-sm mb-4">
+            <div class="card-body">
+              <h5 class="card-title">{{ project.title }}</h5>
+              <p class="card-text">{{ project.description }}</p>
+              <p><strong>Entreprise :</strong> {{ project.companyName }}</p>
+              <p><strong>Date :</strong> {{ project.date }}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue';
-  
-  const name = ref("John Doe");
-  const photoUrl = ref("https://via.placeholder.com/150");
-  const description = ref("Je suis un professionnel expérimenté dans le domaine de la conception web et du développement d'applications.");
-  const domaine = ref("Développeur Web");
-  const telephone = ref("123-456-7890");
-  const email = ref("johndoe@example.com");
-  
-  const socialLinks = ref({
-    'fab fa-facebook-f': "https://facebook.com",
-    'fab fa-twitter': "https://twitter.com",
-    'fab fa-linkedin-in': "https://linkedin.com",
-    'fab fa-instagram': "https://instagram.com"
-  });
-  
-  const services = ref(["Développement de sites web", "Consultation technique"]);
-  const newService = ref("");
-  
-  const projects = ref([]);
-  const newProject = ref({
-    title: "",
-    description: "",
-    companyName: "",
-    date: ""
-  });
-  
-  function addService() {
-    if (newService.value) {
-      services.value.push(newService.value);
-      newService.value = "";
-    }
+  </div>
+  <EditProfil v-if="editC" @close="editC = false"/>
+</template>
+
+<script setup>
+
+import { useRoute } from 'vue-router';
+import { useGestionStore } from '../store/gestion';
+import { onMounted, ref } from 'vue';
+import EditProfil from './EditProfil.vue';
+
+
+const route = useRoute();
+const gestionStore = useGestionStore();
+
+const user = ref(null);
+
+onMounted(async () => {
+  const userId = route.params.id;
+  user.value = await gestionStore.getUserById(userId);
+  gestionStore.setUser(user.value); // Mise à jour de l'utilisateur dans le store
+});
+
+const editC = ref(false)
+  function EditProfile() {
+    editC.value = true
   }
-  
-  function addProject() {
-    if (newProject.value.title && newProject.value.description && newProject.value.companyName && newProject.value.date) {
-      projects.value.push({ ...newProject.value });
-      newProject.value = { title: "", description: "", companyName: "", date: "" };
-      // Ferme le modal après ajout
-      const modalElement = document.getElementById('addProjectModal');
-      const modal = bootstrap.Modal.getInstance(modalElement);
-      modal.hide();
-    }
-  }
-  
-  function saveProfile() {
-    console.log("Profil mis à jour :", {
-      name: name.value,
-      photoUrl: photoUrl.value,
-      domaine: domaine.value,
-      description: description.value,
-      telephone: telephone.value,
-      email: email.value,
-      socialLinks: socialLinks.value,
-      services: services.value,
-      projects: projects.value
-    });
-  }
-  </script>
-  
-  <style scoped>
+</script>
+
+<style scoped>
+/* Background and layout styles */
+.profile-page {
+  background: white;
+  border-radius: 30px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+}
+
+.cover-image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+}
+
+/* Profile header styles */
+.profile-header {
+  margin-top: -80px;
+}
+
+.profile-img {
+  width: 180px;
+  height: 180px;
+  border: 5px solid #fff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-info {
+  margin-top: 10px;
+}
+
+.name {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #343a40;
+}
+
+.availability {
+  font-size: 0.9em;
+  color: #6c757d;
+}
+
+/* Edit button styles */
+.edit-buttons .btn {
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.edit-buttons .btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.edit-buttons .btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+/* Section styles */
+.section {
+  background-color: #ffffff;
+  border-radius: 15px;
+  border : solid 1px #f3f3f3e1;
+  padding: 20px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 1.5em;
+  color: #495057;
+  margin-bottom: 15px;
+}
+
+.description-text, .contact-info p {
+  color: #6c757d;
+}
+
+/* Badge styles for services */
+.service-badge {
+  background-color: #007bff;
+  color: white;
+  border-radius: 15px;
+  padding: 8px 12px;
+  font-size: 0.9em;
+  margin: 5px;
+}
+
+/* Project card styles */
+.project-card {
+  transition: transform 0.2s ease;
+}
+
+.project-card:hover {
+  transform: scale(1.05);
+}
+
+.card-title {
+  font-weight: bold;
+  color: #007bff;
+}
+
+/* Social links */
+.social-links a {
+  color: #495057;
+  font-size: 1.2em;
+  margin: 0 8px;
+  transition: color 0.3s;
+}
+
+.social-links a:hover {
+  color: #007bff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
   .profile-page {
-    max-width: 900px;
-    margin: auto;
+    padding: 15px;
   }
-  
+
   .profile-img {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
-    border: 3px solid #007bff;
+    width: 140px;
+    height: 140px;
   }
-  
-  .card-header {
-    background: none;
-    padding: 0;
+
+  .edit-buttons {
+    margin-top: 15px;
   }
-  
-  .description {
-    font-size: 1.1rem;
-    color: #555;
-  }
-  
-  .social-links {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .social-icon {
-    font-size: 1.5rem;
-    color: #007bff;
-  }
-  </style>
-  
+}
+</style>

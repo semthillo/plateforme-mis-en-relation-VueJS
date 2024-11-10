@@ -5,7 +5,14 @@ import Register from "../views/login/Register.vue";
 import Profil from "../views/Profil.vue";
 import Apropos from "../views/Apropos.vue";
 import Service from "../views/Service.vue";
+import PresataProfile from "../views/presataProfile.vue";
+import HomeAdmin from "../views/HomeAdmin.vue";
+import ListAdmin from "../views/admin/ListAdmin.vue";
+import Admin from "../views/admin/Admin.vue";
 
+import Domaine from "../views/domaine/Domaine.vue";
+import GestionService from "../views/service/GestionService.vue";
+import ListPresta from "../views/prestataire/ListPresta.vue";
 
 
 
@@ -23,7 +30,7 @@ const routes = [
         component: Login
     },
     {
-        path: "/profil",
+        path: "/profil/:id",
         name: "profil",
         component: Profil
     },
@@ -36,6 +43,41 @@ const routes = [
         path: "/service",
         name: "service",
         component: Service
+    },
+    {
+        path: "/PrestaProfile/:id",
+        name: "prestaProfile",
+        component: PresataProfile,
+    },
+    {
+        path: "/homeadmin",
+        name: "homeadmin",
+        component: HomeAdmin,
+    },
+    {
+        path: "/listadmin",
+        name: "listadmin",
+        component: ListAdmin,
+    },
+    {
+        path: "/admin",
+        name: "admin",
+        component: Admin,
+    },
+    {
+        path: "/domaine",
+        name: "domaine",
+        component: Domaine,
+    },
+    {
+        path: "/gestionservice",
+        name: "gestionservice",
+        component: GestionService,
+    },
+    {
+        path: "/listpresta",
+        name: "listpresta",
+        component: ListPresta,
     },
 ]
 

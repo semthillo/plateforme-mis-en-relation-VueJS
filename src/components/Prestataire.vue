@@ -3,42 +3,58 @@
         <div class="titre">
             <h3><span>Nos</span> Prestataires</h3> 
         </div>  
-        <router-link to="/profil">Profil</router-link>
+      
         <div class="container px-4 py-5" id="featured-3">
             <div class="card-grid">
-                <div class="feature">
+                <div v-for="user in prestataires" :key="user.id" class="feature">
                     <div class="card-horizontal d-flex align-items-center p-3">
-                        <img src="https://via.placeholder.com/150" class="img-thumbnail rounded" alt="Photo du prestataire">
+                        <img :src="user.profil || 'https://via.placeholder.com/150'" class="img-thumbnail rounded" alt="Photo du prestataire">
                         <div class="card-body">
-                            <h5 class="card-title">Nom du Prestataire</h5>
-                            <p class="card-text"><strong>Nom d'entreprise:</strong> Entreprise Exemple</p>
-                            <p class="card-text"><strong>Adresse:</strong> 123 Rue Exemple, Ville</p>
-                            <p class="card-text"><strong>Disponibilité:</strong> Disponible</p>
-                            <p class="card-text"><strong>Domaine:</strong> Plomberie</p>
-                            <a href="#" class="btn btn-primary mt-3">Voir le profil</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="feature">
-                    <div class="card-horizontal d-flex align-items-center p-3">
-                        <img src="https://via.placeholder.com/150" class="img-thumbnail rounded" alt="Photo du prestataire">
-                        <div class="card-body">
-                            <h5 class="card-title">Nom du Prestataire</h5>
-                            <p class="card-text"><strong>Nom d'entreprise:</strong> Entreprise Exemple</p>
-                            <p class="card-text"><strong>Adresse:</strong> 123 Rue Exemple, Ville</p>
-                            <p class="card-text"><strong>Disponibilité:</strong> Disponible</p>
-                            <p class="card-text"><strong>Domaine:</strong> Plomberie</p>
-                            <a href="#" class="btn btn-primary mt-3">Voir le profil</a>
+                            <h5 class="card-title">{{ user.name }}</h5>
+                            
+                            <p class="card-text"><strong>Adresse:</strong> {{ user.address }}</p>
+                            <p class="card-text"><strong>Disponibilité:</strong> {{ user.availability || 'Non spécifiée' }}</p>
+                            <p class="card-text"><strong>Domaine:</strong> {{ user.domain || 'Plomberie' }}</p>
+                            <router-link class="btn btn-primary mt-3" :to="`/PrestaProfile/${user.id}`">
+                                Voir le profil
+                            </router-link>
                         </div>
                     </div>
                 </div>
             </div>
         </div> 
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </template>
 
 <script setup>
-// Ajoutez votre script ici si nécessaire
+import { computed, onMounted } from 'vue';
+import { useGestionStore } from '../store/gestion';
+
+const gestionStore = useGestionStore();
+
+onMounted(async () => {
+    await gestionStore.loadDataFromApi();
+});
+
+// Filtrer pour n'afficher que les utilisateurs ayant le rôle "prestataire"
+const prestataires = computed(() => gestionStore.users.filter(user => user.role === "prestataire"));
 </script>
 
 <style scoped>
