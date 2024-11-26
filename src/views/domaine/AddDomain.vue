@@ -10,6 +10,7 @@
               <div class="mb-3">
                 <label for="name" class="form-label">Nom</label>
                 <input type="text" class="form-control" id="name" v-model="newDmn.name" required />
+                <small class="text-danger">{{ errors.name }}</small>
               </div>
             </div>
   
@@ -25,14 +26,25 @@
   
   <script setup>
   import { useRouter } from "vue-router";
-  import { ref, onMounted } from "vue";
+  import { ref, onMounted, watch } from "vue";
   import { useGestionStore } from "../../store/gestion";
   import { useToast } from "vue-toastification";
+
   
   const store = useGestionStore();
   const router = useRouter();
   const toast = useToast();
-  
+  const errors = ref({});
+const serverErrors = ref([]); 
+watch(serverErrors, (newErrors) => {
+  errors.value = {}; // Réinitialiser les erreurs
+  newErrors.forEach((err) => {
+    if (err.path === "name") {
+      errors.value.name = err.msg;
+    }
+ 
+  });
+});
   const emit = defineEmits(["close"]);
   function closeModal() {
     emit("close");
@@ -55,10 +67,15 @@
     }
     resetForm();
     closeModal();
-    router.push({ path: "/domaine" });
+   
   } catch (error) {
-    toast.error("Erreur lors de l'ajout ou de la mise à jour du domaine");
-    console.error("Erreur de soumission :", error);
+    
+    if (error.response && error.response.data.errors) {
+      // Remplir les erreurs serveur
+      serverErrors.value = error.response.data.errors;
+    } else {
+      toast.error("Erreur lors de l'ajout ou de la mise à jour du domaine");
+    }
   }
 };
 

@@ -27,7 +27,7 @@
 
       <div class="edit-buttons text-center">
         <button class="btn btn-primary btn-lg" @click="openModalEdiProfil(user)">Modifier Mon Profil</button>
-        <button class="btn btn-secondary mx-2" @click="openProjectModal">Ajouter un projet</button>
+        
       </div>
     </div>
 
@@ -75,13 +75,7 @@
           </li>
         </ul>
         <div class="card-body d-flex justify-content-between">
-          <button 
-            type="button" 
-            class="btn btn-outline-primary rounded-pill px-3"
-            title="Modifier"
-            @click="openEditProjectModal(project)" >
-            <i class="fa fa-pencil" aria-hidden="true"></i>
-          </button>
+         
           <button 
             type="button" 
             class="btn btn-outline-secondary rounded-pill px-3"
@@ -122,7 +116,17 @@
           <input type="email" class="form-control" id="email" v-model="editedUser.email" required />
           <small class="text-danger">{{ errors.email }}</small>
         </div>
-
+        <div class="mb-3">
+              <label for="password" class="form-label">Mot de passe</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                v-model="editedUser.password"
+                required
+              />
+              <small class="text-danger">{{ errors.password }}</small>
+            </div>
         <div class="mb-3">
           <label for="address" class="form-label">Adresse</label>
           <input type="text" class="form-control" id="address" v-model="editedUser.address" required />
@@ -152,7 +156,24 @@
           </div>
           <button type="button" @click="addSocialLink" class="btn btn-secondary mt-2">Ajouter un lien</button>
         </div>
-
+        <div class="dropdown">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+        Sélectionnez des Services
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <li>
+          <div v-for="item in services" :key="item.id">
+            <input
+              type="checkbox"
+              :id="'service-' + item.id"
+              :value="item.id"
+              v-model="selectedServices"
+            />
+            <label :for="'service-' + item.id">{{ item.name }}</label>
+          </div>
+        </li>
+      </ul>
+    </div>
         <!-- Boutons d'action -->
         <div class="modal-footer mt-5">
           <button type="button" class="btn btn-secondary" @click="closeEditModalProfil()">Fermer</button>
@@ -170,116 +191,8 @@
   
 
   </div>
-  <!-- <div v-if="isModalOpen" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Modifier Mon Profil</h5>
-        <button type="button" class="btn-close" aria-label="Close" @click="closeModal"></button>
-      </div>
-      <div class="modal-body">
-        <form @submit.prevent="onSubmit">
-          <div class="grid">
-            <div class="mb-3">
-              <label for="name" class="form-label">Nom</label>
-              <input type="text" class="form-control" id="name" v-model="newAdm.name" required />
-            </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="email" v-model="newAdm.email" required />
-            </div>
-            <div class="mb-3">
-              <label for="address" class="form-label">Adresse</label>
-              <input type="text" class="form-control" id="address" v-model="newAdm.address" required />
-            </div>
-            <div class="mb-3">
-              <label for="telephone" class="form-label">Téléphone</label>
-              <input type="text" class="form-control" id="telephone" v-model="newAdm.telephone" required />
-            </div>
-            <div class="mb-3">
-              <label for="availability" class="form-label">Disponibilité</label>
-              <input type="text" class="form-control" id="availability" v-model="newAdm.availability" required />
-            </div>
-            <div class="mb-3">
-              <label for="description" class="form-label">Description</label>
-              <textarea class="form-control" id="description" v-model="newAdm.description" rows="3"></textarea>
-            </div>
-            <div class="mb-3">
-              <label for="profil" class="form-label">Photo De Profil</label>
-              <input type="text" class="form-control" id="profil" v-model="newAdm.profil"  />
-            </div>
-          
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeModal">Fermer</button>
-            <button type="submit" class="btn btn-primary">Enregistrer</button>
-          </div>
-        </form>
-        
-      </div>
-    </div>
-  </div> -->
 
-  <div v-if="isEditModalOpen" class="modal-overlay">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title">Modifier Un Projet</h5>
-      <button
-        type="button"
-        class="btn-close"
-        aria-label="Close"
-        @click="closeEditModal"
-      ></button>
-    </div>
-    <div class="modal-body">
-      <form @submit.prevent="onEditProjectSubmit">
-          <div class="grid-projet">
-             <div class="mb-3">
-            <label for="projectTitle" class="form-label">Titre</label>
-            <input type="text" class="form-control" id="projectTitle" v-model="currentProject.title" required />
-            <small class="text-danger">{{ errors.title }}</small>
-          </div>
-          
-          <div class="mb-3">
-            <label for="projectDate" class="form-label">Date de Debut</label>
-            <input type="datetime-local" class="form-control" id="projectDate" v-model="currentProject.startDate" required />
-            <small class="text-danger">{{ errors.startDate }}</small>
-          </div>
-          <div class="mb-3">
-            <label for="endDate" class="form-label">Date de Fin</label>
-            <input type="datetime-local" class="form-control" id="endDate" v-model="currentProject.endDate" />
-            <small class="text-danger">{{ errors.endDate }}</small>
-          </div>
-          <div class="mb-3">
-            <label for="projectCompany" class="form-label">Entreprise</label>
-            <input type="text" class="form-control" id="projectCompany" v-model="currentProject.companyName" required />
-            <small class="text-danger">{{ errors.companyName }}</small>
-          </div>
-          <div class="mb-3">
-  <label for="projectImages" class="form-label">Images du Projet</label>
-  <input
-    type="file"
-    class="form-control"
-    id="projectImages"
-    multiple
-    @change="handleFileChange"
-  />
-</div>
-
-          
-          </div>
-        
-          <div class="mb-3">
-            <label for="projectDesc" class="form-label">Description</label>
-            <textarea type="text" class="form-control" id="projectDesc" v-model="currentProject.description" required maxlength="500" >
-              <small class="text-danger">{{ errors.description }}</small>
-            </textarea>
-          </div>
-          
-          <button type="submit" class="btn btn-primary">Enregistrer le projet</button>
-        </form>
-    </div>
-  </div>
-</div>
+ 
 
 
 
@@ -289,87 +202,9 @@
 
 
 
-<div v-if="isProjectModalOpen" class="modal-overlay mt-5">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Ajouter un Projet</h5>
-        <button type="button" class="btn-close" aria-label="Close" @click="closeProjectModal"></button>
-      </div>
-      <div class="modal-body modal-project">
-        <form @submit.prevent="onProjectSubmit">
-          <div class="grid-projet">
-             <div class="mb-3">
-            <label for="projectTitle" class="form-label">Titre</label>
-            <input type="text" class="form-control" id="projectTitle" v-model="newProject.title" required />
-            <small class="text-danger">{{ errors.title }}</small>
-          </div>
-          
-          <div class="mb-3">
-            <label for="projectDate" class="form-label">Date de Debut</label>
-            <input type="datetime-local" class="form-control" id="projectDate" v-model="newProject.startDate" required />
-            <small class="text-danger">{{ errors.startDate }}</small>
-          </div>
-          <div class="mb-3">
-            <label for="endDate" class="form-label">Date de Fin</label>
-            <input type="datetime-local" class="form-control" id="endDate" v-model="newProject.endDate" />
-            <small class="text-danger">{{ errors.endDate }}</small>
-          </div>
-          <div class="mb-3">
-            <label for="projectCompany" class="form-label">Entreprise</label>
-            <input type="text" class="form-control" id="projectCompany" v-model="newProject.companyName" required />
-            <small class="text-danger">{{ errors.companyName }}</small>
-          </div>
-          <div class="mb-3">
-  <label for="projectImages" class="form-label">Images du Projet</label>
-  <input
-    type="file"
-    class="form-control"
-    id="projectImages"
-    multiple
-    @change="handleFileChange"
-  />
-</div>
 
-          <div class="mb-3">
-            <button type="button" class=" btn btn-secondary form-control" @click="showDomainModal = true" >Selectionner un domaine</button>
-          </div> 
-          </div>
-        
-          <div class="mb-3">
-            <label for="projectDesc" class="form-label">Description</label>
-            <textarea type="text" class="form-control" id="projectDesc" v-model="newProject.description" required maxlength="500" >
-              <small class="text-danger">{{ errors.description }}</small>
-            </textarea>
-          </div>
-          
-          <button type="submit" class="btn btn-primary">Créer le projet</button>
-        </form>
-      </div>
-    </div>
-  </div>
   
-  <div v-if="showDomainModal" class="modal-overlay">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title">Sélectionner Domaines</h5>
-      <button type="button" class="btn-close" @click="showDomainModal = false"></button>
-    </div>
-    <div class="modal-body">
-      <div v-for="item in user.domains" :key="item.domain.id">
-        <input
-          type="radio"
-          :id="'domain-' + item.domain.id"
-          :value="item.domain.id"
-          v-model="newProject.domain_id"
-        />
-        <label :for="'domain-' + item.domain.id">{{ item.domain.name }}</label>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-primary" @click="showDomainModal = false">OK</button>
-    </div>
-  </div>
-</div>
+
 
 
 
@@ -433,6 +268,7 @@ import { useGestionStore } from '../store/gestion';
 import { onMounted, ref, computed, watch } from 'vue';
 import { useToast } from 'vue-toastification';
 import axios from 'axios';
+import { Dropdown } from "bootstrap";
 const showDetails = ref(false);
 const toast = useToast();
 const route = useRoute();
@@ -443,6 +279,7 @@ const newAdm = ref({});
 const errors = ref({});
 const modalProfilEdit = ref(false)
 const profil = ref("");
+const selectedServices = ref([]);
 const serverErrors = ref([]); 
 watch(serverErrors, (newErrors) => {
   errors.value = {}; // Réinitialiser les erreurs
@@ -452,6 +289,9 @@ watch(serverErrors, (newErrors) => {
     }
     if (err.path === "email") {
       errors.value.email = err.msg;
+      if (err.path === "password") {
+      errors.value.password = err.msg;
+    }
     }
     if (err.path === "telephone") {
       errors.value.telephone = err.msg;
@@ -487,6 +327,13 @@ const newProject = ref({
   endDateDate: '',
   user_id: null,
   domain_id: null
+});
+onMounted(() => {
+  // Activer les dropdowns manuellement
+  const dropdownElementList = document.querySelectorAll(".dropdown-toggle");
+  dropdownElementList.forEach((dropdownToggleEl) => {
+    new Dropdown(dropdownToggleEl);
+  });
 });
 
 function openModalEdiProfil(user){
@@ -540,6 +387,14 @@ function formatDate(date) {
       return new Intl.DateTimeFormat('fr-FR', options).format(new Date(date));
     }
   
+const services = ref([])
+
+async function  getServices() {
+  services.value = await gestionStore.loadServiceFromApi()
+}
+    onMounted(async () => {
+  await getServices()
+})
 
 console.log(projects);
 
@@ -560,6 +415,7 @@ const editedUser = ref({ ...user });
 const socialLinks = ref([{ url: "", type: "" }]);
 watch(user, (newUser) => {
   editedUser.value = { ...newUser };
+  selectedServices.value 
   socialLinks.value = newUser.socialLinks && Array.isArray(newUser.socialLinks) ? newUser.socialLinks : [{ url: "", type: "" }];
   profil.value = newUser.profil || "";
 });
@@ -585,7 +441,7 @@ const handleFileChange = (event) => {
 function removeSocialLink(index) {
   socialLinks.value.splice(index, 1);
 }
-// const currentProfile = ref({
+
 //   id: null,
 //   name: "",
 //   email: "",
@@ -638,42 +494,6 @@ function closeEditModal() {
   isEditModalOpen.value = false;
 }
 
-// const updateProfile = async () => {
-//   try {
-//     // Créer un FormData pour envoyer les données modifiées au serveur
-//     const formData = new FormData();
-//     formData.append("name", currentProfile.value.name);
-//     formData.append("email", currentProfile.value.email);
-//     formData.append("address", currentProfile.value.address);
-//     formData.append("telephone", currentProfile.value.telephone);
-//     formData.append("availability", currentProfile.value.availability);
-//     formData.append("description", currentProfile.value.description);
-
-//     // Ajouter la photo de profil si elle est changée
-//     if (profileImage.value) {
-//       formData.append("profil", profileImage.value);
-//     }
-
-//     // Ajouter les liens sociaux
-//     currentProfile.value.socialLinks.forEach((link, index) => {
-//       formData.append(`socialLinks[${index}].url`, link.url);
-//       formData.append(`socialLinks[${index}].type`, link.type);
-//     });
-
-//     // Appel à la fonction du store pour modifier le profil
-//     await userStore.updateProfile(formData);
-//     toast.success("Profil modifié avec succès");
-//     closeModal();
-//   } catch (error) {
-//     if (error.response && error.response.data.errors) {
-//       // Afficher les erreurs serveur si elles existent
-//       serverErrors.value = error.response.data.errors;
-//     } else {
-//       toast.error("Erreur lors de la modification du profil");
-//       console.error(error);
-//     }
-//   }
-// };
 
 const onSubmit = async () => {
   try {
@@ -696,7 +516,8 @@ const onSubmit = async () => {
       // Étape 2 : Préparer les données utilisateur avec l'image uploadée
       const updatedUserData = {
         ...editedUser.value,
-        profil: uploadResponse.data.imageUrl, // URL de l'image
+        profil: uploadResponse.data.imageUrl, 
+        ...selectedServices.value,// URL de l'image
         socialLinks: socialLinks.value.map(link => ({ ...link })),
       };
 
@@ -745,93 +566,12 @@ function closeProjectModal() {
   isProjectModalOpen.value = false;
 }
 
-// const onSubmit = async () => {
-//  try {
-//   const formData = new FormData();
-//     formData.append("name", newAdm.value.name);
-//     formData.append("email", newAdm.value.email);
-//     formData.append("password", newAdm.value.password);
-//     formData.append("address", newAdm.value.address);
-//     formData.append("telephone", newAdm.value.telephone);
-//     formData.append("availability", newAdm.value.availability);
-//     formData.append("description", newAdm.value.description);
-//     formData.append("upload", profil.value);
-
-//     formData.append("socialLinks", JSON.stringify(socialLinks.value));
-
-//     const response = await axios.post(
-//       "http://localhost:3005/api/upload",
-//       formData,
-//       {
-//         headers: {
-//           "Content-Type": "multipart/form-data",
-//         },
-//       }
-//     );
-//     if (response.data.success) {
-//       // Ajout du fichier photo dans les données utilisateur
-//       newAdm.value.profil = response.data.imageUrl; // Tu peux utiliser le nom du fichier retourné
-//       console.log(newAdm.value);
-      
-//       const userData = {
-//       ...newAdm.value,
-//       socialLinks: socialLinks.value.map(link => ({ ...link })),
-//     };
-//     console.log("User Data to be sent:", userData); 
-
-//     await gestionStore.updateUser(userData);
-//      toast.success("Profil mis à jour avec succès");
-//     closeModal();
-//   } 
-  
-// }catch (error) {
-//     toast.error("Erreur lors de la mise à jour du profil");
-//     console.error(error);
-//   }
-// };
-
-
-  //
-  //   await gestionStore.updateUser(user.value.id, newAdm.value);
-  //   Object.assign(user.value, newAdm.value); // Met à jour les informations de l'utilisateur
-  //  
 
   console.log(newProject.value.domain_id); // Vérifie que domainId est bien défini
 
 
 
-  const onProjectSubmit = async () => {
-  try {
-    const formData = new FormData();
-    formData.append("title", newProject.value.title);
-    formData.append("description", newProject.value.description);
-    formData.append("companyName", newProject.value.companyName);
-    formData.append("startDate", newProject.value.startDate);
-    formData.append("endDate", newProject.value.endDate);
-    formData.append("user_id", newProject.value.user_id);
-    formData.append("domain_id", newProject.value.domain_id);
 
-    // Ajouter les images
-    files.value.forEach((file) => {
-      formData.append("images", file); // Correspond au champ attendu par le backend
-    });
-
-    // Appeler le store pour envoyer les données
-    await gestionStore.addProject(formData);
-    toast.success("Projet ajouté avec succès");
-    resetForm();
-    getProjet();
-    closeProjectModal();
-  } catch (error) {
-    if (error.response && error.response.data.errors) {
-      // Remplir les erreurs serveur
-      serverErrors.value = error.response.data.errors;
-    } else {
-    toast.error("Erreur lors de l'ajout du projet");
-    console.error(error);
-  }
-}
-};
 
 const showImageFullScreen = (imageName) => {
   fullScreenImage.value = imageName;
@@ -851,38 +591,7 @@ const destroy = async (project) => {
   }
 };
 
-const onEditProjectSubmit = async () => {
-  try {
-    const formData = new FormData();
-    formData.append("title", currentProject.value.title || "");
-    formData.append("description", currentProject.value.description || "");
-    formData.append("companyName", currentProject.value.companyName || "");
-    formData.append("startDate", currentProject.value.startDate || "");
-    formData.append("endDate", currentProject.value.endDate || "");
-    formData.append("user_id", currentProject.value.user_id || "");
-    formData.append("domain_id", currentProject.value.domain_id || "");
 
-    // Ajouter les images (seulement si elles ont changé)
-    files.value.forEach((file) => {
-      formData.append("images", file);
-    });
-
-    // Appeler le store avec l'ID du projet et les données du formulaire
-    await gestionStore.updateProject(currentProject.value.id, formData);
-    toast.success("Projet modifié avec succee !")
-    resetEditForm();
-    getProjet(); // Recharge les projets affichés
-    closeEditModal();
-  } catch (error) {
-    if (error.response && error.response.data.errors) {
-      // Remplir les erreurs spécifiques renvoyées par le serveur
-      serverErrors.value = error.response.data.errors;
-    } else {
-      toast.error("Erreur lors de la modification du projet");
-      console.error(error);
-    }
-  }
-};
 
 
 </script>

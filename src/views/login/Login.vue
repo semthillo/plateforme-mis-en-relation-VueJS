@@ -12,8 +12,8 @@
       </div>
       <button type="submit">Se connecter</button>
       <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-      <p>Vous n'avez pas de compte ? <router-link to="/register">S'inscrire</router-link></p>
     </form>
+    <router-link to="/register">Mot de passe oublié ?</router-link>
   </div>
 </template>
 
@@ -33,19 +33,33 @@ const router = useRouter();
 async function handleLogin() {
   try {
     const user = await authStore.login(email.value, password.value);
-    toast.success("Connexion réussie !");
     
-    
-    if (user.role === "admin") {
-      router.push(`/homeAdmin`);
-    } else if (user.role === "prestataire") {
-      router.push(`/profil/${user.id}`);
+    console.log('Utilisateur après connexion:', user); 
+
+    if (user && user.role) {
+      toast.success("Connexion réussie !");
+      
+      if (user.role === "admin") {
+        console.log("Redirection vers /homeAdmin");
+        router.push(`/homeadmin/${user.userId}`);
+
+      } else if (user.role === "prestataire") {
+        console.log("Redirection vers /profil");
+        router.push({ name: "profil", params: { id: user.userId } });
+      }
+    } else {
+      console.error("Rôle de l'utilisateur non trouvé");
+      errorMessage.value = "Rôle de l'utilisateur non trouvé.";
     }
   } catch (error) {
     errorMessage.value = error.message;
+    console.error(error);
   }
 }
+
 </script>
+
+
 
 <style scoped>
 .login-container {

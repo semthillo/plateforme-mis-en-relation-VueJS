@@ -1,9 +1,15 @@
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js"
 
 import 'bootstrap';
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
+
+
+
+import piniaPersistedState from 'pinia-plugin-persistedstate';
+
+
 
 
 
@@ -30,12 +36,13 @@ import Partenaire from './components/Partenaire.vue';
 const app = createApp(App)
 const pinia = createPinia()
 
+
 dom.watch();
 app.component('NavBar', NavBar)
 app.component('Footer', Footer)
 app.component('Partenaire', Partenaire)
 app.component('Prestataire', Prestataire)
-
+pinia.use(piniaPersistedState);
 app.use(Toast);
 // app.use(Toast, {
 //     position: "top-right",

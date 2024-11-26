@@ -1,28 +1,49 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from '../views/Home.vue'
+import Home from '../views/Home.vue';
 import Login from "../views/login/Login.vue";
 import Register from "../views/login/Register.vue";
-import Profil from "../views/Profil.vue";
+import Profil from '../views/Profil.vue';
 import Apropos from "../views/Apropos.vue";
 import Service from "../views/Service.vue";
-import PresataProfile from "../views/presataProfile.vue";
+import PrestaProfile from "../views/PrestaProfile.vue";
 import HomeAdmin from "../views/HomeAdmin.vue";
 import ListAdmin from "../views/admin/ListAdmin.vue";
-import Admin from "../views/admin/Admin.vue";
 
-import Domaine from "../views/domaine/Domaine.vue";
-import GestionService from "../views/service/GestionService.vue";
+
 import ListPresta from "../views/prestataire/ListPresta.vue";
-
-
-
+import ListDomain from "../views/domaine/ListDomain.vue";
+import ListService from "../views/service/ListService.vue";
+import ListPrestataire from "../views/ListPrestataire.vue";
+import ResetPassword from "../views/login/ResetPassword.vue";
+import ProfilPrestaAdmin from "../views/ProfilPrestaAdmin.vue";
 
 
 const routes = [
     {
         path: "/",
         name: "Home",
-        component: Home
+        component: Home,
+
+    },
+    
+        
+            {
+                path: "/apropos",
+                name: "apropos",
+                component: Apropos
+            },
+            {
+                path: "/service",
+                name: "service",
+                component: Service
+            },
+           
+        
+    
+    {
+        path: "/list-presta",
+        name: "list-presta",
+        component: ListPrestataire,
     },
     {
         path: "/login",
@@ -30,61 +51,80 @@ const routes = [
         component: Login
     },
     {
+        path: "/register",
+        name: "register",
+        component: Register
+    },
+    {
         path: "/profil/:id",
         name: "profil",
-        component: Profil
+        component: Profil,
+        meta: { requiresAuth: true, role: "prestataire" },
+        props: true
     },
     {
-        path: "/apropos",
-        name: "apropos",
-        component: Apropos
-    },
-    {
-        path: "/service",
-        name: "service",
-        component: Service
-    },
-    {
-        path: "/PrestaProfile/:id",
+        path: "/prestaProfile/:id",
         name: "prestaProfile",
-        component: PresataProfile,
+        component: PrestaProfile,
+        props: true
     },
     {
-        path: "/homeadmin",
+        path: "/reset-password",
+        name: "ResetPassword",
+        component: ResetPassword,
+        props: true
+    },
+    {
+        path: "/homeadmin/:id",
         name: "homeadmin",
         component: HomeAdmin,
+        meta: { requiresAuth: true, role: "admin" },
+        
+        children: [
+            {
+                path: "listadmin",
+                name: "listadmin",
+                component: ListAdmin,
+                meta: { requiresAuth: true, role: "admin" },
+            },
+            {
+                path: "listdomaine",
+                name: "listdomaine",
+                component: ListDomain 
+            },
+            {
+                path: "listservice",
+                name: "listervice",
+                component: ListService
+            },
+            {
+                path: "listpresta",
+                name: "listpresta",
+                component: ListPresta,
+               
+            },
+            {
+                path: "presta-admin/:id",
+                name: "presta-admin",
+                component: ProfilPrestaAdmin,
+                props: true,
+            },
+            {
+                path: "presta-admin/:id",
+                name: "presta-admin",
+                component: ProfilPrestaAdmin,
+                props: true,
+        
+            },
+        ]
     },
-    {
-        path: "/listadmin",
-        name: "listadmin",
-        component: ListAdmin,
-    },
-    {
-        path: "/admin",
-        name: "admin",
-        component: Admin,
-    },
-    {
-        path: "/domaine",
-        name: "domaine",
-        component: Domaine,
-    },
-    {
-        path: "/gestionservice",
-        name: "gestionservice",
-        component: GestionService,
-    },
-    {
-        path: "/listpresta",
-        name: "listpresta",
-        component: ListPresta,
-    },
-]
+    
+ 
+];
 
 const router = createRouter({
     history: createWebHistory(),
     routes
-  });
+});
 
-
-export default router
+export default router;

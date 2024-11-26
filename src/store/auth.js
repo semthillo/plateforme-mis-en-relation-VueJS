@@ -1,72 +1,4 @@
-// import { defineStore } from "pinia";
-// import axios from "axios";
-// import {
-//   requestPasswordReset,
-//   resetPassword
-// } from "../../src/components/auth";
-
-// export const useAuthStore = defineStore("authStore", {
-//   state: () => ({
-//     token: null,
-//     user: null,
-//     emailMessage: ""
-//   }),
-
-//   actions: {
-//     async login(email, password) {
-//       try {
-//         const response = await axios.post("http://localhost:3005/api/login", {
-//           email,
-//           password
-//         });
-
-//         this.token = response.data.token;
-
-//         const userResponse = await axios.get("http://localhost:3005/api/profile", {
-//           headers: {
-//             Authorization: `Bearer ${this.token}`
-//           }
-//         });
-
-//         this.user = userResponse.data.user;
-//       } catch (error) {
-//         console.error("Erreur lors de la connexion :", error.message);
-//         throw error;
-//       }
-//     },
-//     async forgotPassword(email) {
-//       try {
-//         const response = await requestPasswordReset(email);
-//         this.emailMessage = response.data.message;
-//       } catch (error) {
-//         console.error("Error during password reset request:", error);
-//         throw error;
-//       }
-//     },
-//     async resetPassword(token, password) {
-//       try {
-//         const response = await resetPassword(token, password);
-//         return response.data.message;
-//       } catch (error) {
-//         console.error("Error during password reset:", error);
-//         throw error;
-//       }
-//     },
-
-//     logout() {
-//       this.token = null;
-//       this.user = null;
-//     }
-//   },
-
-//   persist: true
-// });
-
-
-
-
 // store/auth.js
-
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { ref } from 'vue';
@@ -76,19 +8,27 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(!!token.value);
   const user = ref(null);
 
+  // Fonction pour se connecter
   async function login(email, password) {
     try {
       const response = await axios.post('http://localhost:3005/api/login', { email, password });
-      this.user = response.data.user;
+
+      // Debugging: Afficher la réponse de l'API pour vérifier la structure des données
+      console.log('Réponse de l\'API:', response.data);
+
+      user.value = {
+        role: response.data.role,
+        userId: response.data.userId,
+        userName: response.data.name
+      };
+      console.log(user.value.name);
+      
+
       token.value = response.data.token;
       isAuthenticated.value = true;
-
-   
-      user.value = response.data.user;
       localStorage.setItem('token', token.value);
-
       axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
-     
+
       return user.value;
     } catch (error) {
       console.error("Erreur lors de la connexion :", error);
@@ -96,6 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // Fonction pour se déconnecter
   function logout() {
     token.value = null;
     isAuthenticated.value = false;
@@ -104,12 +45,17 @@ export const useAuthStore = defineStore('auth', () => {
     delete axios.defaults.headers.common['Authorization'];
   }
 
-  async function fetchUserProfile() {
+  // Fonction pour récupérer les informations de l'utilisateur en fonction de son ID
+  async function fetchUserProfile(userId) {
     if (!token.value) return;
 
     try {
-      const response = await axios.get('http://localhost:3005/api/profile');
-      user.value = response.data;
+      const response = await axios.get(`http://localhost:3005/api/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+      });
+      user.value = response.data; 
     } catch (error) {
       console.error("Erreur lors du chargement du profil de l'utilisateur :", error);
     }

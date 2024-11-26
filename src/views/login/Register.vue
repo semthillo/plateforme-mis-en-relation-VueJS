@@ -1,50 +1,44 @@
 <template>
     <div class="register-container">
-      <h2>Inscription</h2>
-      <form @submit.prevent="handleRegister">
-        <div class="form-group">
-          <label for="name">Nom :</label>
-          <input type="text" id="name" v-model="name" required />
-        </div>
+      <h2>Recupération de mot de passe</h2>
+      <form @submit.prevent="handleForgotPassword">
+        
         <div class="form-group">
           <label for="email">Email :</label>
           <input type="email" id="email" v-model="email" required />
         </div>
-        <div class="form-group">
-          <label for="password">Mot de passe :</label>
-          <input type="password" id="password" v-model="password" required />
-        </div>
-        <div class="form-group">
-          <label for="confirmPassword">Confirmer le mot de passe :</label>
-          <input type="password" id="confirmPassword" v-model="confirmPassword" required />
-        </div>
-        <button type="submit">S'inscrire</button>
-        <p>Déjà un compte ? <a href="#" @click.prevent="goToLogin">Se connecter</a></p>
+        <button type="submit">Recevoir un mail</button>
+        <router-link class="annuler " to="/login">Annuler</router-link>
       </form>
     </div>
   </template>
   
   <script setup>
-  import { ref } from 'vue';
-  
-  const name = ref('');
-  const email = ref('');
-  const password = ref('');
-  const confirmPassword = ref('');
-  
-  function handleRegister() {
-    if (password.value !== confirmPassword.value) {
-      alert("Les mots de passe ne correspondent pas.");
-      return;
-    }
-    // Logique d'inscription
-    console.log("Nom:", name.value, "Email:", email.value, "Mot de passe:", password.value);
+import axios from 'axios';
+import { ref } from 'vue';
+import { useToast } from 'vue-toastification';
+import { useRoute, useRouter } from "vue-router";
+const route = useRoute();
+const router = useRouter();
+const email = ref("")
+const message = ref("")
+const toast = useToast()
+
+  async function handleForgotPassword() {
+  try {
+    const response = await axios.post(
+      "http://localhost:3005/api/request-reset-password",
+      { email: email.value }
+    );
+    message.value = response.data.message || "Lien de réinitialisation envoyé.";
+    toast.success("Lien de réinitialisation envoyé ! \n Verifiez votre boite mail");
+    router.push("/");
+  } catch (error) {
+    message.value = error.response.data.message || "Erreur lors de l'envoi.";
+    toast.error("Erreur lors de l'envoi.");
   }
-  
-  function goToLogin() {
-    // Rediriger vers l'interface de connexion
-    console.log("Redirection vers la connexion...");
-  }
+  console.log("Valeur de l'email :", email.value);
+}
   </script>
   
   <style scoped>
@@ -58,6 +52,12 @@
   }
   h2 {
     text-align: center;
+    font-size: 1.2rem;
+  }
+  .annuler{
+    text-align: center;
+    margin-left: 40%;
+    margin-top: 50px;
   }
   .form-group {
     margin-bottom: 15px;

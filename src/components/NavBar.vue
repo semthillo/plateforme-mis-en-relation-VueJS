@@ -1,6 +1,7 @@
-<template lang="">
+<template>
   <nav class="navbar navbar-expand-lg navbar-light border-bottom fixed-top" style="background-color: white; border: rgb(141, 140, 140)">
     <div class="container">
+      <!-- Logo et lien vers la page d'accueil -->
       <router-link class="navbar-brand logo" to="/">
         <span class="logo-text-one">One</span>
         <span class="logo-text-click">Click</span>
@@ -10,54 +11,90 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+      
       <div class="collapse navbar-collapse d-flex justify-content-sm-end" id="navbarSupportedContent">
-        <ul class="navbar-nav me-5 mb-2 mb-lg-0">
+        <!-- Liens de navigation -->
+        <ul class="navbar-nav me-5 mt-4 mb-2 mb-lg-0">
           <li class="nav-item">
-            <router-link class="nav-link active" aria-current="page" to="/">Accueil</router-link>
+            <router-link class="nav-link fw-bold active" aria-current="page" to="/">Accueil</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link active" aria-current="page" to="/apropos">A propos</router-link>
+            <router-link class="nav-link fw-bold active" aria-current="page" to="apropos">A propos</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link active" aria-current="page" to="/service">Services</router-link>
+            <router-link class="nav-link fw-bold active" aria-current="page" to="service">Services</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link fw-bold active" aria-current="page" to="/list-presta">Prestataire</router-link>
           </li>
         </ul>
-        <!-- <div class="navbar-right">
-          <div class="d-flex" v-if="gestionStore.user" >
-            <div class="user-info">
-              <i class="fas fa-user"></i>
-              <span>{{ gestionStore.user.name }}</span>
-            </div>
-            <button @click="handleLogout" class="btn btn-outline-secondary">Déconnexion</button>
+
+        <!-- Section de l'utilisateur (connexion/déconnexion) -->
+        <div class="navbar-right mt-2">
+          <div v-if="authStore.isAuthenticated">
+  <div class="user-info">
+    <p @click="goToProfil(authStore.user?.id, authStore.user?.role)" style="cursor: pointer; color: green;">
+      <i class="fas fa-user me-2"></i>
+      <span>{{ authStore.user?.name }}</span>
+    </p>
+  </div>
+  <button @click="handleLogout" class="btn btn-outline-secondary">Déconnexion</button> <!-- Bouton de déconnexion -->
+</div>
+
+          <div v-else>
+            <router-link to="/login" class="btn btn-primary">Se connecter</router-link> <!-- Lien vers la page de connexion -->
           </div>
-          <div v-else> -->
-            <router-link to="/login" class="btn btn-primary">Se connecter</router-link>
-          <!-- </div> 
-        </div>-->
-        <div>
+        </div>
+
+        <!-- Sélecteur de langue -->
+        <!-- <div>
           <select class="form-select" aria-label="Language select">
             <option value="1">FR</option>
             <option value="2">EN</option>
             <option value="3">AR</option>
           </select>
-        </div>
+        </div> -->
       </div>
     </div>
   </nav>
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'; 
+import { useAuthStore } from '../store/auth.js';
+import { onMounted } from 'vue'; 
 import { useRoute } from 'vue-router';
-import { useGestionStore } from '../store/gestion';
 
-const route = useRoute();
-const gestionStore = useGestionStore();
+const router = useRouter();
+const authStore = useAuthStore();
+const route = useRoute(); 
+
+
+onMounted(() => {
+  const userId = route.params.id;
+  if (userId) {
+    authStore.fetchUserProfile(userId); 
+  }
+});
 
 function handleLogout() {
-  gestionStore.logout();
-  route.push('/'); 
+  authStore.logout();  
+  router.push({ path: '/' });  
 }
+
+const goToProfil = (userId, role) => {
+  if (role === 'admin') {
+    router.push({ path: `/homeadmin/${userId}` }); // Rediriger vers le profil admin
+  } else if (role === 'prestataire') {
+    router.push({ path: `/prestaProfile/${userId}` }); // Rediriger vers le profil prestataire
+  }
+};
+
 </script>
+
+
+
+
 
 <style scoped>
 .logo {

@@ -27,9 +27,10 @@
             <button class="btn btn-secondary me-2" @click="viewDetails(admin)">
               <i class="fa fa-eye" aria-hidden="true"></i>
             </button>
-            <button class="btn btn-info me-2" @click="editAdm(index)">
-              <i class="fa fa-pencil" aria-hidden="true"></i>
-            </button>
+            <router-link :to="`/homeadmin/${currentId}/presta-admin/${admin.id}`" class="btn btn-info me-2">
+  <i class="fa fa-pencil" aria-hidden="true"></i>
+</router-link>
+
             <button class="btn btn-danger" @click="destroy(admin)">
               <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
@@ -85,24 +86,26 @@
 </div>
 
   </div>
-  <AddPresta v-if="add" @close="add = false"></AddPresta>
+  <AddPresta v-if="add" @close="add = false" @adminAdded="getAdmin()" ></AddPresta>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { useGestionStore } from "../../store/gestion";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import AddPresta from "./AddPresta.vue";
-
+import { useToast } from "vue-toastification";
+const route = useRoute()
 const router = useRouter();
 const gestionStore = useGestionStore();
 const showDetails = ref(false);
 const selectedAdmin = ref(null);
 const add = ref(false);
-
+const toast = useToast()
 const newAdmin = () => {
   add.value = true;
 };
+const currentId = parseInt(route.params.id)
 
 const editAdm = (index) => {
   gestionStore.currentIndex = index;
@@ -125,9 +128,10 @@ const admins = computed(() => {
 
 async function getAdmin() {
   try {
-    await gestionStore.fetchAdmins();
+    await gestionStore.fetchAdmins(); 
+    admins.value = gestionStore.users.filter(user => user.role === "prestataire");
   } catch (error) {
-    console.error("Erreur lors de la récupération des prestaires:", error);
+    console.error("Erreur lors de la récupération des prestataires:", error);
   }
 }
 
@@ -136,11 +140,29 @@ onMounted(async () => {
 });
 
 const destroy = (admin) => {
-  if (window.confirm("Confirmer la suppression de ce prestataire")) {
-    const index = gestionStore.users.findIndex((r) => r === admin);
-    if (index !== -1) {
-      gestionStore.deleteUser(index);
+  selectedAdmin.value = admin; // Assigner l'administrateur sélectionné
+  if (!selectedAdmin.value) {
+    toast.error("Aucun administrateur sélectionné");
+    return;
+  }
+
+  try {
+    if (window.confirm("Confirmer la suppression de cet administrateur ?")) {
+      const index = admins.value.findIndex(admin => admin.id === selectedAdmin.value.id);
+      if (index !== -1) {
+        const adminId = admins.value[index].id;
+        gestionStore.deleteUser(adminId);
+        admins.value.splice(index, 1);
+        gestionStore.users.filter((user) => user.role === "prestataire");
+        toast.success("Admin supprimé avec succès");
+        
+      } else {
+        toast.error("Administrateur non trouvé");
+      }
     }
+  } catch (error) {
+    toast.error("Erreur de suppression");
+    console.error(error);
   }
 };
 </script>

@@ -17,6 +17,7 @@
               v-model="newAdm.name"
               required
             />
+            <small class="text-danger">{{ errors.name }}</small>
           </div>
           <div class="mb-3">
             <label for="address" class="form-label">Email</label>
@@ -26,7 +27,8 @@
               id="address"
               v-model="newAdm.email"
               required
-            ></input>
+            />
+            <small class="text-danger">{{ errors.email }}</small>
           </div>
           <div class="mb-3">
             <label for="address" class="form-label">Mot de passe</label>
@@ -36,7 +38,8 @@
               id="address"
               v-model="newAdm.password"
               required
-            ></input>
+            >
+            <small class="text-danger">{{ errors.password }}</small>
           </div>
           <div class="mb-3">
             <label for="address" class="form-label">Role</label>
@@ -46,7 +49,8 @@
               id="address"
               v-model="newAdm.role"
               disabled
-            ></input>
+            >
+            <small class="text-danger">{{ errors.role }}</small>
           </div>
           <div class="mb-3">
             <label for="email" class="form-label">Address</label>
@@ -57,6 +61,7 @@
               v-model="newAdm.address"
               required
             />
+            <small class="text-danger">{{ errors.address }}</small>
           </div>
           <div class="mb-3">
             <label for="phone" class="form-label">Téléphone</label>
@@ -67,6 +72,7 @@
              v-model="newAdm.telephone"
               required
             />
+            <small class="text-danger">{{ errors.telephone }}</small>
           </div>
 
           </div>
@@ -84,49 +90,85 @@
 </template>
 <script setup>
 import { useRouter } from "vue-router";
-
-import { ref } from "vue";
-
-const store = useGestionStore();
-const router = useRouter();
-
+import { onMounted, ref, watch } from "vue";
 import { defineProps, defineEmits } from "vue";
 import { useGestionStore } from "../../store/gestion";
 import { useToast } from "vue-toastification";
 
+const store = useGestionStore();
+const router = useRouter();
+const toast = useToast();
 
-const toast = useToast()
-
+const errors = ref({});
+const serverErrors = ref([]); 
+watch(serverErrors, (newErrors) => {
+  errors.value = {}; // Réinitialiser les erreurs
+  newErrors.forEach((err) => {
+    if (err.path === "name") {
+      errors.value.name = err.msg;
+    }
+    if (err.path === "email") {
+      errors.value.email = err.msg;
+    }
+    if (err.path === "password") {
+      errors.value.password = err.msg;
+    }
+    if (err.path === "role") {
+      errors.value.role = err.msg;
+    }
+    if (err.path === "telephone") {
+      errors.value.telephone = err.msg;
+    }
+    if (err.path === "address") {
+      errors.value.address = err.msg;
+    }
+    if (err.path === "availability") {
+      errors.value.availability = err.msg;
+    }
+    if (err.path === "description") {
+      errors.value.description = err.msg;
+    }
+  });
+});
 const props = defineProps({
   add: Boolean,
 });
 
-const emit = defineEmits(["close"]);
-
+const emit = defineEmits(["close", "adminAdded"]);
 function closeModal() {
   emit("close");
 }
 
-const newAdm = ref({ name: "",  email: "" , password:"", role: "admin", address: "", telephone: ""});
+const newAdm = ref({ name: "", email: "", password: "", role: "admin", address: "", telephone: "" });
 
 const resetForm = () => {
-  newAdm.value = ref({ name: "",  email: "" , password:"", role: "", address: "", telephone: ""});
+  newAdm.value = { name: "", email: "", password: "", role: "admin", address: "", telephone: "" };
 };
+
 const onSubmit = async () => {
   console.log("Données envoyées :", newAdm.value);
   try {
-    await store.addUser(newAdm.value);
+    await store.addUser(newAdm.value);   // Ajouter l'utilisateur via le store
+    toast.success("Admin ajouté avec succès");
     resetForm();
-    toast.success("Admin Ajouté avec success")
-    router.push({ name: "admin" });
-    closeModal()
+    closeModal();
+    emit("adminAdded"); // Émettre l'événement pour indiquer l'ajout
   } catch (error) {
-    console.error("Erreur lors de l'ajout de l'utilisateur :", error);
+    console.error("Erreur lors de l'ajout de l'utilisateur :", error.response || error);
+  // Si la structure des erreurs est différente, ajustez ici
+  if (error.response && error.response.data.errors) {
+    serverErrors.value = error.response.data.errors;
   }
+  toast.error("Erreur de l'ajout de l'admin")
+}
 };
 
 
+onMounted(() => {
+  store.fetchAdmins()
+})
 </script>
+
 <style scoped>
 #carouselExampleControls .carousel-item img {
   height: 100vh;

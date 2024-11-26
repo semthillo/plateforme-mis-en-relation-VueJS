@@ -1,4 +1,16 @@
 <template>
+   <NavBar />
+    <div class="container contenu">
+        <h2>Gestion des Services</h2>
+        <button type="button" class="btn btn-primary" @click="newDomain()">
+    Ajouter <i class="fa fa-plus-circle" aria-hidden="true"></i>
+</button>
+
+
+    </div>
+    
+   <AddService v-if="add" :add="add" @close="add = false"/>
+
     <div class="container mt-5">
       <table class="table table-bordered table-sm table-striped">
         <thead>
@@ -44,13 +56,14 @@
         </div>
       </div>
     </div>
-    <EditService v-if="editC" @close="editC = false" />
+    <EditService v-if="editC" :service="selectedService" @close="editC = false" />
   </template>
   
   <script setup>
   import { onMounted, ref } from "vue";
   import { useGestionStore } from "../../store/gestion";
 import EditService from "./EditService.vue";
+import AddService from './AddService.vue';
 
   const gestionStore = useGestionStore();
   const showDetails = ref(false);
@@ -60,15 +73,21 @@ import EditService from "./EditService.vue";
     selectedService.value = service;
     showDetails.value = true;
   };
-  
+  const add = ref(false)
+
+function newDomain(){
+    add.value = true
+}
+
   const closeDetails = () => {
     showDetails.value = false;
     selectedService.value = null;
   };
   
   const editC = ref(false);
+  
   const EditServic = (service) => {
-    selectedService.value = service; 
+    selectedService.value = { ...service }; 
     editC.value = true; 
   };
   
@@ -85,6 +104,12 @@ import EditService from "./EditService.vue";
   </script>
   
   <style scoped>
+  .contenu {
+    margin-top: 100px;
+}
+.contenu button {
+    margin-left: 90%;
+}
   .modal.show {
     display: block;
     background-color: rgba(0, 0, 0, 0.5);
