@@ -52,6 +52,12 @@
   .partner-logo:hover {
     opacity: 1;
   }
+  @media (max-width: 992px) {
+    .partners-section{
+      margin-top: 0%;
+      padding-top: 0%;
+    }
+  }
   
   @media (min-width: 768px) {
     .partner-logo {

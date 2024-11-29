@@ -131,18 +131,19 @@ import NavBar from '../components/NavBar.vue';
     background-color: rgb(3, 130, 205);
   }
   
-  @media (max-width: 768px) {
-    .card-horizontal {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-    .img-thumbnail {
-      margin: 0 0 15px 0;
-    }
-    .card-body {
-      text-align: center;
-    }
+  
+  @media (max-width: 992px) {
+    .search-bar {
+     
+    width: 80%;
+    
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 20px;
+  }
+
   }
   </style>
   

@@ -167,7 +167,30 @@
     margin-top: 30px;
     margin-left: 40px;
   }
-  
+  @media (max-width: 992px) {
+    .about-us .row {
+    margin-top: auto;
+    margin-left: auto;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .about-us .row img {
+    margin-top: auto;
+    margin-left: 15px;
+    
+  }
+  .lead{
+    width: 80%;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: auto;
+    border-radius: 30px;
+  }
+  .social-icons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  }
   /* Section réseaux sociaux */
   .social-icons a {
     text-decoration: none;

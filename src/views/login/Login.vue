@@ -1,5 +1,7 @@
 <template>
-  <div class="login-container">
+  <NavBar />
+  <div class="container-fluid">
+    <div class="login-container">
     <h2>Connexion</h2>
     <form @submit.prevent="handleLogin">
       <div class="form-group">
@@ -15,6 +17,8 @@
     </form>
     <router-link to="/register">Mot de passe oublié ?</router-link>
   </div>
+  </div>
+  
 </template>
 
 <script setup>
@@ -62,6 +66,14 @@ async function handleLogin() {
 
 
 <style scoped>
+.container-fluid{
+  /* background-image: url(../../assets/pexels-codioful-7134986.jpg); */
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding-top: 130px;
+  filter: blur(100);
+}
 .login-container {
   max-width: 400px;
   margin: auto;
@@ -69,6 +81,9 @@ async function handleLogin() {
   border: 1px solid #ddd;
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* margin-top: 150px; */
+  background-color: transparent;
+
 }
 h2 {
   text-align: center;

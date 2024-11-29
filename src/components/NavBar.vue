@@ -9,8 +9,9 @@
         <i class="fa fa-mouse-pointer logo-icon"></i>
       </router-link>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
       
       <div class="collapse navbar-collapse d-flex justify-content-sm-end" id="navbarSupportedContent">
         <!-- Liens de navigation -->
@@ -28,24 +29,23 @@
             <router-link class="nav-link fw-bold active" aria-current="page" to="/list-presta">Prestataire</router-link>
           </li>
         </ul>
-
-        <!-- Section de l'utilisateur (connexion/déconnexion) -->
         <div class="navbar-right mt-2">
-          <div v-if="authStore.isAuthenticated">
-  <div class="user-info">
-    <p @click="goToProfil(authStore.user?.id, authStore.user?.role)" style="cursor: pointer; color: green;">
-      <i class="fas fa-user me-2"></i>
-      <span>{{ authStore.user?.name }}</span>
-    </p>
-  </div>
-  <button @click="handleLogout" class="btn btn-outline-secondary">Déconnexion</button> <!-- Bouton de déconnexion -->
+  <div v-if="authStore.isAuthenticated">
+<div class="user-info">
+<p v-if="authStore.isAuthenticated" style="cursor: pointer; color: green;" @click="goToProfil(authStore.user?.id, authStore.user?.role)">
+<i class="fas fa-user me-2" ></i>
+<!-- <span>{{ authStore.user?.name }}</span> Affichage du nom de l'utilisateur -->
+</p>
+</div>
+<button @click="handleLogout" class="btn btn-outline-secondary">Déconnexion</button> <!-- Bouton de déconnexion -->
 </div>
 
-          <div v-else>
-            <router-link to="/login" class="btn btn-primary">Se connecter</router-link> <!-- Lien vers la page de connexion -->
-          </div>
-        </div>
-
+  <div v-else>
+    <router-link to="/login" class="btn btn-primary">Se connecter</router-link> <!-- Lien vers la page de connexion -->
+  </div>
+</div>
+        <!-- Section de l'utilisateur (connexion/déconnexion) -->
+       
         <!-- Sélecteur de langue -->
         <!-- <div>
           <select class="form-select" aria-label="Language select">
@@ -58,6 +58,7 @@
     </div>
   </nav>
 </template>
+
 
 <script setup>
 import { useRouter } from 'vue-router'; 
@@ -86,7 +87,7 @@ const goToProfil = (userId, role) => {
   if (role === 'admin') {
     router.push({ path: `/homeadmin/${userId}` }); // Rediriger vers le profil admin
   } else if (role === 'prestataire') {
-    router.push({ path: `/prestaProfile/${userId}` }); // Rediriger vers le profil prestataire
+    router.push({ path: `/profil/${userId}` }); // Rediriger vers le profil prestataire
   }
 };
 
@@ -97,6 +98,12 @@ const goToProfil = (userId, role) => {
 
 
 <style scoped>
+@media (max-width: 992px) {
+  .navbar-collapse {
+    display: none !important;
+  }
+}
+
 .logo {
   display: flex;
   align-items: center;

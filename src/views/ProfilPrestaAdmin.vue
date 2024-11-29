@@ -862,4 +862,10 @@ const destroy = async (project) => {
     margin-top: 15px;
   }
 }
+@media (max-width: 992px) {
+  .row{
+    display: flex;
+    grid-template-columns: repeat(1,fr);
+  }
+}
 </style>

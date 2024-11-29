@@ -18,14 +18,20 @@
     </div>
 
     <!-- Carrousel de Catégories -->
-    <div class="categories-carousel mt-5 d-flex  justify-content-center">
-      <div class="category-wrapper">
-        <div class="category-item" v-for="(category, index) in categories" :key="index">
-          <i :class="category.icon"></i>
-          <span>{{ category.label }}</span>
-        </div>
-      </div>
+    <!-- Carrousel de Catégories -->
+<div class="categories-carousel mt-5 d-flex justify-content-center">
+  <div class="category-wrapper row">
+    <div 
+      class="category-item col-6 col-sm-4 col-md-3 col-lg-2" 
+      v-for="(category, index) in categories" 
+      :key="index"
+    >
+      <i :class="category.icon"></i>
+      <span>{{ category.label }}</span>
     </div>
+  </div>
+</div>
+
 
     <!-- Section des prestataires et filtre -->
     
@@ -142,9 +148,10 @@ object-fit: cover;
 /* Carrousel de Catégories */
 .categories-carousel .category-wrapper {
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
   padding: 15px;
-  
+  justify-content: center; /* Centrer les éléments */
 }
 
 .category-item {
@@ -170,6 +177,32 @@ object-fit: cover;
   font-size: 0.9rem;
 }
 
+/* Media Queries */
+@media (max-width: 768px) {
+  .category-item {
+    font-size: 0.8rem;
+    padding: 10px;
+  }
+
+  .category-item i {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .categories-carousel .category-wrapper {
+    gap: 10px;
+  }
+
+  .category-item {
+    padding: 8px;
+  }
+
+  .category-item span {
+    font-size: 0.8rem;
+  }
+}
+
 .titre {
     text-align: center;
     margin: 0 auto;
@@ -182,8 +215,8 @@ object-fit: cover;
 
 /* Section des Prestataires et Filtres */
 
-
-/* Section Services 
+@media (max-width: 992px) {
+ 
 .section-service .service-info {
   color: #000000;
 }
@@ -196,9 +229,21 @@ object-fit: cover;
 .section-service .row{
   
   gap: 20px;
-}*/
+}
 .container .section-service{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
 }
+.welcome-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.welcome-subtitle {
+  font-size: 0.8rem;
+  color: #ddd;
+}
+}
+
 </style>

@@ -202,6 +202,8 @@
       </div>
     </div>
   </div>
+
+  <Footer />
   </template>
   
   <script setup>
@@ -382,7 +384,16 @@ const closeFullScreenImage = () => {
   .social-links a:hover {
     color: #007bff;
   }
-  
+  @media (max-width: 992px) {
+    .project-card {
+    transition: transform 0.2s ease;
+    
+  }
+  .row{
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+  }
+  }
   /* Responsive adjustments */
   @media (max-width: 576px) {
     .profile-page {

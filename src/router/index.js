@@ -27,16 +27,16 @@ const routes = [
     },
     
         
-            {
-                path: "/apropos",
-                name: "apropos",
-                component: Apropos
-            },
-            {
-                path: "/service",
-                name: "service",
-                component: Service
-            },
+    {
+        path: "/apropos",
+        name: "apropos",
+        component: Apropos
+    },
+    {
+        path: "/service",
+        name: "service",
+        component: Service
+    },
            
         
     

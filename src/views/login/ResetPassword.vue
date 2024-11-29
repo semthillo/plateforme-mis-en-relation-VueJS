@@ -1,5 +1,6 @@
 <template>
-  <div class="register-container">
+  <div class="container-fluid">
+    <div class="register-container">
     <h2>Recupération de mot de passe</h2>
     <form @submit.prevent="handleResetPassword">
       
@@ -16,6 +17,8 @@
     </form>
     <p v-if="message" class="message">{{ message }}</p>
   </div>
+  </div>
+ 
 </template>
 
 
@@ -67,6 +70,14 @@ async function handleResetPassword() {
 </script>
 
 <style scoped>
+.container-fluid{
+  /* background-image: url(../../assets/pexels-codioful-7134986.jpg); */
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding-top: 130px;
+  filter: blur(100);
+}
 .register-container {
   max-width: 400px;
   margin: auto;

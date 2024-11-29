@@ -140,7 +140,7 @@
   }
   
   .service-name {
-    font-size: 1.7rem;
+    font-size: 1.4rem;
     color: rgb(4, 150, 235);
     font-weight: bold;
   }
@@ -175,6 +175,21 @@
   .modal-body {
     max-height: 400px;
     overflow-y: auto;
+  }
+
+  @media (max-width: 992px) {
+    .search-bar{
+      width: 80%;
+    }
+    .card-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 20px;
+  }
+  .feature .card{
+    width: 80%;
+    margin: auto;
+  }
   }
   </style>
   

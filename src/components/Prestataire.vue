@@ -24,7 +24,7 @@
           </li>
         </ul>
         <button 
-          class="btn btn-secondary mt-3" 
+          class="btn btn-secondary text-3 mt-3" 
           @click="selectedDomain = ''">
           Réinitialiser le filtre
         </button>
@@ -118,6 +118,7 @@ const filteredPrestataires = computed(() => {
 </script>
 
 <style scoped>
+
 /* Styles pour la barre de recherche et la disposition des cartes */
 .search-bar {
   width: 100%;
@@ -150,10 +151,12 @@ const filteredPrestataires = computed(() => {
 }
 
 .img-thumbnail {
-  width: 150px;
-  height: 150px;
+  width: 90px;
+  height: 90px;
   object-fit: cover;
   margin-right: 20px;
+ 
+  
 }
 
 .card-body {
@@ -201,7 +204,43 @@ const filteredPrestataires = computed(() => {
 .btn-primary:hover {
   background-color: rgb(3, 130, 205);
 }
+@media (max-width: 768px) {
+  .filter-bar-container {
+    flex: 1 1 100%; /* Prend toute la largeur sur petits écrans */
+    max-width: none;
+    width: 100%;
+  }
+  .filter-bar{
+    width: 90%;
+    text-align: left;
+  }
+  .filter-bar h4{
+     font-size: 20px;
+     width: 100%;
+  }
+  .list-group-item{
+    background: transparent;
+  }
+  .form-control{
+    width: 100%;
+  }
+  .card-grid {
+    flex: 1 1 100%; /* S'empile sous la barre de filtres sur petits écrans */
+    grid-template-columns: 1fr;
+    
+  }
+  .card-text, .card-title{
+    text-align: left;
+  }
+ 
 
+}
+@media (max-width: 768px) {
+  .card-grid {
+    flex: 1 1 100%; /* S'empile sous la barre de filtres sur petits écrans */
+    grid-template-columns: 1fr; /* Une seule carte par ligne */
+  }
+}
 @media (max-width: 768px) {
   .card-horizontal {
     flex-direction: column;

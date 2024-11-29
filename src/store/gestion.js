@@ -107,11 +107,14 @@ export const useGestionStore = defineStore("gestion", {
     async deleteUser(id) {
       try {
         await axios.delete(`http://localhost:3005/api/users/${id}`);
-        await this.fetchAdmins();
+        // Optionnel : Mettez à jour la liste des utilisateurs si elle est gérée globalement
+        this.users = this.users.filter((user) => user.id !== id);
       } catch (error) {
+        console.error("Erreur lors de la suppression de l'utilisateur :", error);
         throw error;
       }
     },
+    
 
     logout() {
       this.user = null;
@@ -148,6 +151,7 @@ export const useGestionStore = defineStore("gestion", {
         return (this.domains = resp.data.map((domain) => ({
           id: domain.id,
           name: domain.name,
+          creatorName: domain.users?.name
         })));
       } catch (error) {
         console.error("Erreur lors de chargement des domains");
@@ -184,14 +188,22 @@ export const useGestionStore = defineStore("gestion", {
       }
     },
 
-    async deleteDomain(id) {
+    async deleteService(id) {
       try {
-        await axios.delete(`http://localhost:3005/api/domains/${id}`);
-        await this.loadDomainFromApi();
+        // Suppression du service via l'API
+        await axios.delete(`http://localhost:3005/api/services/${id}`);
+        
+        // Rafraîchir la liste des services après suppression
+        await this.loadServiceFromApi();
+    
+        // Afficher un toast de succès
+        toast.success("Service supprimé avec succès !");
       } catch (error) {
-        throw error;
+        // Afficher un toast d'erreur en cas de problème
+        toast.error("Échec de la suppression du service. Veuillez réessayer.");
       }
     },
+    
 
     async loadProjectFromApi() {
       try {
@@ -347,6 +359,8 @@ export const useGestionStore = defineStore("gestion", {
         this.services = resp.data.map((service) => ({
           id: service.id,
           name: service.name,
+          userName: service.user?.name,
+          domainName: service.domain?.name
         }));
         return this.services
       } catch (error) {

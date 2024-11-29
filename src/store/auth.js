@@ -1,32 +1,36 @@
-// store/auth.js
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token') || null);
   const isAuthenticated = ref(!!token.value);
-  const user = ref(null);
+  const user = ref(JSON.parse(localStorage.getItem('user')) || null);
+
+  // Charger les informations utilisateur au démarrage
+  onMounted(() => {
+    if (user.value && token.value) {
+      isAuthenticated.value = true;
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
+    }
+  });
 
   // Fonction pour se connecter
   async function login(email, password) {
     try {
       const response = await axios.post('http://localhost:3005/api/login', { email, password });
 
-      // Debugging: Afficher la réponse de l'API pour vérifier la structure des données
-      console.log('Réponse de l\'API:', response.data);
-
       user.value = {
         role: response.data.role,
         userId: response.data.userId,
         userName: response.data.name
       };
-      console.log(user.value.name);
-      
 
       token.value = response.data.token;
       isAuthenticated.value = true;
       localStorage.setItem('token', token.value);
+      localStorage.setItem('user', JSON.stringify(user.value));
+
       axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
 
       return user.value;
@@ -42,6 +46,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated.value = false;
     user.value = null;
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     delete axios.defaults.headers.common['Authorization'];
   }
 
@@ -55,7 +60,8 @@ export const useAuthStore = defineStore('auth', () => {
           Authorization: `Bearer ${token.value}`,
         },
       });
-      user.value = response.data; 
+      user.value = response.data;
+      localStorage.setItem('user', JSON.stringify(user.value));  // Sauvegarder l'utilisateur dans localStorage
     } catch (error) {
       console.error("Erreur lors du chargement du profil de l'utilisateur :", error);
     }
